@@ -8,7 +8,7 @@
 
 桌面客户端会发布在 GitHub Releases：
 
-https://github.com/op7418/Night-Patrol/releases
+https://github.com/fengfanM/Card-Game-Night-Patrol/releases
 
 当前计划提供：
 
@@ -133,8 +133,6 @@ git push origin v0.2.1-demo
 ## 版权与授权
 
 《夜巡录：荒庙篇》由 FF.INC × Codex 联合开发，仅供娱乐、学习和非商业展示。
-
-除另有说明外，本项目采用 `CC BY-NC 4.0` 授权：允许非商业分享和改编，但必须署名，不得移除作者信息，不得用于售卖、广告导流、商业试玩包、应用商店上架或其它商业分发。
 
 推荐署名：
 
