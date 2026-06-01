@@ -260,6 +260,20 @@ button:focus-visible {
   padding-top: 76px;
 }
 
+.screen-map,
+.screen-cinematic,
+.screen-reward,
+.screen-event,
+.screen-rest,
+.screen-shop,
+.screen-remove,
+.screen-upgrade,
+.screen-gameover,
+.screen-victory {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .screen::after {
   content: "";
   position: absolute;
@@ -560,7 +574,7 @@ button:focus-visible {
 
 .route-view,
 .choice-view {
-  height: 100%;
+  min-height: 100%;
   display: grid;
   grid-template-columns: minmax(520px, 1fr) 340px 270px;
   gap: 20px;
@@ -572,7 +586,7 @@ button:focus-visible {
 
 .choice-view {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   grid-template-columns: minmax(0, 1fr) 270px;
   background: #07100f;
 }
