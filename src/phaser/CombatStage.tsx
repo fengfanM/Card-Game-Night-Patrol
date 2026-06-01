@@ -176,11 +176,13 @@ class NightBattleScene extends Phaser.Scene {
     this.player?.setPosition(this.playerBaseX, this.playerBaseY);
     this.playerSprite?.setDisplaySize(width * 0.2, height * 0.48).setFlipX(true);
     this.playerShadow?.setSize(width * 0.18, height * 0.055);
-    this.enemyName?.setText(this.snapshot.enemyName).setPosition(width * 0.74, height * 0.3);
+    const compactText = width < 520;
+    this.enemyName?.setText(this.snapshot.enemyName).setPosition(width * 0.74, height * 0.3).setVisible(!compactText);
     this.sealText
       ?.setText(`符印 ${this.snapshot.enemySeal}   格挡 ${this.snapshot.enemyBlock}`)
-      .setPosition(width * 0.74, height * 0.38);
-    this.intentText?.setText(this.snapshot.enemyIntent).setPosition(width * 0.74, height * 0.22);
+      .setPosition(width * 0.74, height * 0.38)
+      .setVisible(!compactText);
+    this.intentText?.setText(this.snapshot.enemyIntent).setPosition(width * 0.74, height * 0.22).setVisible(!compactText);
     if (this.snapshot.pulse !== this.lastPulse) {
       this.lastPulse = this.snapshot.pulse;
       this.cameras.main.shake(110, 0.004);

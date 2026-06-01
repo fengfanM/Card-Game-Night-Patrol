@@ -163,10 +163,19 @@ export function App() {
   };
 
   const player = game.player;
+  const visibleScreen = loadingDifficulty ? "loading" : game.screen;
 
   useEffect(() => {
     audio().setMusicMode(game.screen === "title" || game.screen === "about" ? "title" : "game");
   }, [game.screen]);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      document.querySelector(".screen")?.scrollTo(0, 0);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [visibleScreen]);
 
   useEffect(
     () => () => {
@@ -174,8 +183,6 @@ export function App() {
     },
     [],
   );
-
-  const visibleScreen = loadingDifficulty ? "loading" : game.screen;
 
   return (
     <div className="app-frame">

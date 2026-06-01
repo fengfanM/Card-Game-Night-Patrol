@@ -2156,8 +2156,96 @@ button:focus-visible {
 }
 
 @media (max-width: 680px) {
+  .top-hud {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 8px 10px 10px;
+    overflow: hidden;
+  }
+
+  .hud-left,
+  .hud-center,
+  .hud-right,
+  .hud-primary-row {
+    width: 100%;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .hud-left::-webkit-scrollbar,
+  .hud-center::-webkit-scrollbar,
+  .hud-right::-webkit-scrollbar,
+  .hud-primary-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hud-left,
+  .hud-center,
+  .hud-right {
+    grid-column: 1;
+    justify-content: flex-start;
+  }
+
+  .hud-center {
+    grid-row: 2;
+  }
+
+  .hud-right {
+    grid-row: 3;
+  }
+
+  .hud-center-stack {
+    min-width: 0;
+    width: max-content;
+    max-width: 100%;
+    justify-items: start;
+    gap: 3px;
+  }
+
+  .hud-primary-row {
+    padding-bottom: 1px;
+  }
+
+  .hud-chip {
+    min-height: 38px;
+    gap: 6px;
+    padding: 6px 10px;
+  }
+
   .hud-chip strong {
     font-size: 1rem;
+  }
+
+  .hud-asset-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .hud-chip-gold .hud-asset-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .hud-title {
+    display: none;
+  }
+
+  .hud-credit {
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .icon-btn svg {
+    width: 22px;
+    height: 22px;
   }
 
   .hero-seal {
@@ -2227,13 +2315,72 @@ button:focus-visible {
     min-height: 0;
   }
 
+  .screen-combat {
+    height: calc(100vh - 180px);
+    height: calc(100svh - 180px);
+    min-height: 0;
+  }
+
   .actor-panel {
-    width: 210px;
+    width: 168px;
   }
 
   .player-panel,
   .enemy-panel {
-    bottom: 350px;
+    bottom: clamp(235px, 42vh, 350px);
+    bottom: clamp(235px, 42svh, 350px);
+  }
+
+  .intent-plaque {
+    min-height: 56px;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+  }
+
+  .intent-plaque span {
+    font-size: 0.68rem;
+  }
+
+  .intent-plaque strong {
+    font-size: 0.9rem;
+    line-height: 1.18;
+  }
+
+  .health-strip strong {
+    font-size: 0.92rem;
+  }
+
+  .status-stack {
+    gap: 4px;
+    margin-top: 5px;
+  }
+
+  .status-badge {
+    min-height: 24px;
+    gap: 3px;
+    padding: 1px 2px;
+    font-size: 0.82rem;
+  }
+
+  .energy-orb {
+    z-index: 72;
+    bottom: clamp(124px, 18vh, 168px);
+    bottom: clamp(124px, 18svh, 168px);
+  }
+
+  .end-turn {
+    z-index: 72;
+    bottom: clamp(118px, 17vh, 178px);
+    bottom: clamp(118px, 17svh, 178px);
+  }
+
+  .pile-counters {
+    z-index: 72;
+  }
+
+  .hand-fan {
+    z-index: 60;
+    bottom: 42px;
   }
 
   .game-card {
@@ -2244,11 +2391,11 @@ button:focus-visible {
 
   .card-mode-hand {
     left: calc(50% - 69px);
-    transform: translate(calc(var(--card-x) * 0.62), var(--card-y)) rotate(var(--card-rot));
+    transform: translate(calc(var(--card-x) * 0.47), var(--card-y)) rotate(var(--card-rot));
   }
 
   .card-mode-hand:hover:not(:disabled) {
-    transform: translate(calc(var(--card-x) * 0.62), calc(var(--card-y) - 56px)) rotate(0deg) scale(1.08);
+    transform: translate(calc(var(--card-x) * 0.47), calc(var(--card-y) - 56px)) rotate(0deg) scale(1.08);
   }
 
   .card-title {
