@@ -301,7 +301,7 @@ function TopHud({
               <span className="hud-title">夜巡录：荒庙篇</span>
             )}
           </div>
-          <span className="hud-credit">歸藏 × Codex 联合开发 · 仅供娱乐 · 非商用署名</span>
+          <span className="hud-credit">FF.INC × Codex 联合开发 · 仅供娱乐</span>
         </div>
       </div>
       <div className="hud-right">
@@ -401,12 +401,12 @@ function AboutScreen({ onBack, onHome }: { onBack: () => void; onHome: () => voi
         <p className="eyebrow">About</p>
         <h1>关于《夜巡录：荒庙篇》</h1>
         <p className="about-lead">
-          本游戏由歸藏与 Codex 联合开发，是一个志怪题材卡牌构筑 roguelike 原型 demo，仅供娱乐、学习和非商业展示。
+          本游戏由 FF.INC 与 Codex 联合开发，是一个志怪题材卡牌构筑 roguelike 原型 demo，仅供娱乐、学习和非商业展示。
         </p>
         <div className="about-grid">
           <article>
             <strong>共同创作</strong>
-            <span>歸藏提出主题、审美方向、玩法反馈和素材取舍；Codex 负责代码实现、系统迭代、UI 打磨、打包流程和工程文档。</span>
+            <span>FF.INC 提出主题、审美方向、玩法反馈和素材取舍；Codex 负责代码实现、系统迭代、UI 打磨、打包流程和工程文档。</span>
           </article>
           <article>
             <strong>版权声明</strong>
@@ -421,7 +421,7 @@ function AboutScreen({ onBack, onHome }: { onBack: () => void; onHome: () => voi
             <span>项目包含 AI 生成素材、用户整理素材和原型资源。若进入正式发行或商业化阶段，需要重新确认素材授权或替换为自有资产。</span>
           </article>
         </div>
-        <p className="about-notice">署名建议：夜巡录：荒庙篇，由歸藏 × Codex 联合开发。</p>
+        <p className="about-notice">署名建议：夜巡录：荒庙篇，由 FF.INC × Codex 联合开发。</p>
         <div className="title-actions">
           <button className="primary-command" type="button" onClick={onBack}>
             <SkipForward /> 返回
