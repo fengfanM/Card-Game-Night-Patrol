@@ -2,7 +2,7 @@
 
 《夜巡录：荒庙篇》由 FF.INC × Codex 联合开发。
 
-本项目是志怪题材卡牌构筑 roguelike 原型 demo，仅供娱乐、学习和非商业展示。除另有说明外，本仓库采用 CC BY-NC 4.0 授权：允许非商业分享和改编，但必须保留署名，不得移除作者信息，不得暗示获得官方背书。
+本项目是志怪题材卡牌构筑 roguelike 原型 demo，仅供娱乐、学习和非商业展示。源代码采用 MIT License，详见 `LICENSE-MIT.md`。游戏名称、文本设定、视觉素材、音频、视频、生成素材、整理素材、截图、打包成品和其它非代码创意内容，除另有说明外，采用 CC BY-NC 4.0 授权：允许非商业分享和改编，但必须保留署名，不得移除作者信息，不得暗示获得官方背书。
 
 ## 禁止事项
 
@@ -22,7 +22,7 @@
 英文署名格式：
 
 ```text
-Night Patrol: Abandoned Temple, created by Guizang x Codex.
+Night Patrol: Abandoned Temple, created by FF.INC x Codex.
 ```
 
 ## 素材说明
