@@ -599,6 +599,14 @@ function CombatScreen({ game, onPlayCard, onEndTurn }: { game: GameState; onPlay
   const targetHot = Boolean(expectedTarget && hoverTarget === expectedTarget);
   const dropHint = expectedTarget === "enemy" ? "拖到妖物身上施放" : expectedTarget === "player" ? "拖到自己身上施放" : "拖到目标身上施放";
 
+  const showPlayFeedback = (target: "player" | "enemy") => {
+    const id = Date.now();
+    setBurst({ id, target, kind: target === "enemy" ? "strike" : "shield" });
+    window.setTimeout(() => {
+      setBurst((current) => (current?.id === id ? null : current));
+    }, 520);
+  };
+
   const beginDrag = (card: CardInstance, event: ReactPointerEvent<HTMLButtonElement>) => {
     if (cardDef(card).unplayable) return;
     const cost = cardCost(card);
@@ -620,12 +628,18 @@ function CombatScreen({ game, onPlayCard, onEndTurn }: { game: GameState; onPlay
     const card = combat.hand.find((item) => item.uid === uid);
     const target = card ? dropTargetForCard(card) : null;
     if (!target || dragHitTarget(point) !== target) return;
-    const id = Date.now();
-    setBurst({ id, target, kind: target === "enemy" ? "strike" : "shield" });
-    window.setTimeout(() => {
-      setBurst((current) => (current?.id === id ? null : current));
-    }, 520);
+    showPlayFeedback(target);
     onPlayCard(uid);
+  };
+
+  const playCardByTap = (card: CardInstance) => {
+    if (!compact || cardDef(card).unplayable) return;
+    const cost = cardCost(card);
+    if (typeof cost !== "number" || player.energy < cost) return;
+    const target = dropTargetForCard(card);
+    if (!target) return;
+    showPlayFeedback(target);
+    onPlayCard(card.uid);
   };
 
   const endDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
@@ -662,7 +676,7 @@ function CombatScreen({ game, onPlayCard, onEndTurn }: { game: GameState; onPlay
   }, [combat.hand, drag, onPlayCard]);
 
   return (
-    <section className="combat-view">
+    <section className={`combat-view ${compact ? "combat-compact-tap" : ""}`}>
       {compact ? (
         <MobileCombatStage combat={combat} player={player} />
       ) : (
@@ -740,12 +754,15 @@ function CombatScreen({ game, onPlayCard, onEndTurn }: { game: GameState; onPlay
                 index={index}
                 count={combat.hand.length}
                 disabled={disabled}
-                dragOffset={isDragging ? { x: drag.dx, y: drag.dy } : undefined}
-                dragging={isDragging}
-                onPointerDown={(event) => beginDrag(card, event)}
-                onPointerMove={moveDrag}
-                onPointerUp={endDrag}
-                onPointerCancel={() => setDrag(null)}
+                dragOffset={!compact && isDragging ? { x: drag.dx, y: drag.dy } : undefined}
+                dragging={!compact && isDragging}
+                tapHint={compact ? mobileCardTapLabel(card, disabled) : undefined}
+                tapAriaLabel={compact ? mobileCardHint(card, disabled) : undefined}
+                onClick={compact ? () => playCardByTap(card) : undefined}
+                onPointerDown={!compact ? (event) => beginDrag(card, event) : undefined}
+                onPointerMove={!compact ? moveDrag : undefined}
+                onPointerUp={!compact ? endDrag : undefined}
+                onPointerCancel={!compact ? () => setDrag(null) : undefined}
               />
             );
           })}
@@ -808,6 +825,8 @@ function GameCard({
   disabled,
   dragging,
   dragOffset,
+  tapHint,
+  tapAriaLabel,
   onClick,
   onPointerDown,
   onPointerMove,
@@ -821,6 +840,8 @@ function GameCard({
   disabled?: boolean;
   dragging?: boolean;
   dragOffset?: { x: number; y: number };
+  tapHint?: string;
+  tapAriaLabel?: string;
   onClick?: () => void;
   onPointerDown?: (event: ReactPointerEvent<HTMLButtonElement>) => void;
   onPointerMove?: (event: ReactPointerEvent<HTMLButtonElement>) => void;
@@ -851,6 +872,8 @@ function GameCard({
       className={`game-card card-${def.type} ${disabled ? "disabled" : ""} ${dragging ? "is-dragging" : ""} ${mode ? `card-mode-${mode}` : ""}`}
       style={style}
       disabled={disabled}
+      data-tap-hint={tapHint}
+      aria-label={tapAriaLabel ? `${cardName(card)}，${tapAriaLabel}` : cardName(card)}
       onClick={onClick}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -870,6 +893,24 @@ function GameCard({
       <p>{cardText(card)}</p>
     </button>
   );
+}
+
+function mobileCardHint(card: CardInstance, disabled: boolean) {
+  const def = cardDef(card);
+  if (disabled) return def.unplayable ? "当前不可使用" : "能量不足";
+  const target = dropTargetForCard(card);
+  if (target === "enemy") return "点击攻击妖物";
+  if (target === "player") return "点击为自己加护";
+  return "点击使用";
+}
+
+function mobileCardTapLabel(card: CardInstance, disabled: boolean) {
+  const def = cardDef(card);
+  if (disabled) return def.unplayable ? "不可使用" : "能量不足";
+  const target = dropTargetForCard(card);
+  if (target === "enemy") return "攻击妖物";
+  if (target === "player") return "自我加护";
+  return "使用";
 }
 
 function cardArtImage(card: CardInstance) {
