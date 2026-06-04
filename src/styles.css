@@ -2740,6 +2740,60 @@ button:focus-visible {
       inset 0 0 0 1px rgba(255, 239, 207, 0.18);
   }
 
+  .combat-compact-tap .play-drop-zone,
+  .combat-compact-tap .target-ghost {
+    display: none;
+  }
+
+  .combat-compact-tap .card-mode-hand {
+    touch-action: pan-x;
+    transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
+  }
+
+  .combat-compact-tap .card-mode-hand:not(:disabled):not(.disabled)[data-tap-hint]::after {
+    content: attr(data-tap-hint);
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    z-index: 3;
+    max-width: 84px;
+    min-height: 22px;
+    display: grid;
+    place-items: center;
+    padding: 0 7px;
+    border: 1px solid rgba(121, 219, 203, 0.46);
+    border-radius: 5px;
+    background:
+      linear-gradient(180deg, rgba(15, 31, 28, 0.88), rgba(5, 12, 12, 0.76));
+    box-shadow:
+      0 5px 10px rgba(0, 0, 0, 0.28),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    color: rgba(203, 255, 242, 0.94);
+    font-size: 0.6rem;
+    font-weight: 900;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.66);
+  }
+
+  .combat-compact-tap .card-mode-hand:not(:disabled):not(.disabled)[data-tap-hint] {
+    box-shadow:
+      0 13px 22px rgba(0, 0, 0, 0.48),
+      0 0 0 1px rgba(121, 219, 203, 0.16),
+      inset 0 0 0 1px rgba(255, 239, 207, 0.18);
+  }
+
+  .combat-compact-tap .card-mode-hand:active:not(:disabled):not(.disabled) {
+    transform: translateY(-7px) scale(0.98);
+    filter: brightness(1.08);
+    box-shadow:
+      0 8px 14px rgba(0, 0, 0, 0.46),
+      0 0 22px rgba(121, 219, 203, 0.24),
+      inset 0 0 0 1px rgba(255, 239, 207, 0.28);
+  }
+
   .card-mode-hand:hover:not(:disabled) {
     transform: none;
   }
