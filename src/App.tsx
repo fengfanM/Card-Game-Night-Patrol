@@ -13,7 +13,7 @@ import {
   VolumeX,
   Zap,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { NODE_DEFS } from "./game/content";
 import {
@@ -43,8 +43,9 @@ import {
   upgradeCard,
 } from "./game/engine";
 import { RitualAudio } from "./game/audio";
-import type { CardInstance, Difficulty, GameState, NodeType, Screen } from "./game/types";
-import { CombatStage } from "./phaser/CombatStage";
+import type { CardInstance, CombatState, Difficulty, GameState, NodeType, PlayerState, Screen } from "./game/types";
+
+const DesktopCombatStage = lazy(() => import("./phaser/CombatStage").then((module) => ({ default: module.CombatStage })));
 
 const routeNames = ["县口", "荒村", "井边", "破庙", "林道", "阴市", "山门", "正殿"];
 const hudBloodUrl = new URL("../assets/vendor/shushan/icon-blood-orb.png", import.meta.url).href;
@@ -662,7 +663,13 @@ function CombatScreen({ game, onPlayCard, onEndTurn }: { game: GameState; onPlay
 
   return (
     <section className="combat-view">
-      <CombatStage combat={combat} player={player} />
+      {compact ? (
+        <MobileCombatStage combat={combat} player={player} />
+      ) : (
+        <Suspense fallback={<div className="desktop-stage-fallback" aria-hidden="true" />}>
+          <DesktopCombatStage combat={combat} player={player} />
+        </Suspense>
+      )}
       {!compact && <video className="combat-scene-loop" src={sceneLoopVideoUrl} autoPlay loop muted playsInline preload="metadata" />}
       <div className={`combat-overlay ${drag ? "drag-active" : ""} ${expectedTarget ? `expects-${expectedTarget}` : ""} ${targetHot ? "target-hot" : ""}`}>
         <div className={`play-drop-zone ${drag ? "visible" : ""} ${targetHot ? "hot" : ""}`}>{targetHot ? "松手施放" : dropHint}</div>
@@ -745,6 +752,31 @@ function CombatScreen({ game, onPlayCard, onEndTurn }: { game: GameState; onPlay
         </div>
       </div>
     </section>
+  );
+}
+
+function MobileCombatStage({ combat, player }: { combat: CombatState; player: PlayerState }) {
+  const enemy = combat.enemy;
+  return (
+    <div className={`mobile-combat-stage hit-${combat.hitTarget || "none"}`} aria-hidden="true">
+      <div className="mobile-stage-sky" />
+      <div className="mobile-stage-ground" />
+      <div className="mobile-stage-line line-a" />
+      <div className="mobile-stage-line line-b" />
+      <MobileActorFigure kind="player" name={player.name} />
+      <MobileActorFigure kind="enemy" name={enemy.name} />
+    </div>
+  );
+}
+
+function MobileActorFigure({ kind, name }: { kind: "player" | "enemy"; name: string }) {
+  return (
+    <div className={`mobile-actor mobile-${kind}-figure`} data-name={name}>
+      <span className="mobile-actor-halo" />
+      <span className="mobile-actor-head" />
+      <span className="mobile-actor-body" />
+      <span className="mobile-actor-staff" />
+    </div>
   );
 }
 
@@ -886,6 +918,7 @@ function CinematicScreen({ game, onContinue }: { game: GameState; onContinue: ()
   const isBoss = cinematic.combatType === "boss";
   const isElite = cinematic.combatType === "elite";
   const shouldTryVideo = !compact && Boolean(videoSrc) && !videoFailed;
+  const playerName = game.player?.name || "夜巡人";
 
   useEffect(() => {
     setVideoFailed(false);
@@ -900,8 +933,17 @@ function CinematicScreen({ game, onContinue }: { game: GameState; onContinue: ()
     >
       <div className="cinematic-scene" aria-label={`${cinematic.enemyName}结算过场参考画面`}>
         <div className="cinematic-moon" />
-        <img className="cinematic-player" src={playerNightPatrolUrl} alt="" draggable={false} />
-        <img className={`cinematic-enemy enemy-${cinematic.enemyArtKey}`} src={enemyArt} alt="" draggable={false} />
+        {compact ? (
+          <div className="mobile-cinematic-duel" aria-hidden="true">
+            <MobileActorFigure kind="player" name={playerName} />
+            <MobileActorFigure kind="enemy" name={cinematic.enemyName} />
+          </div>
+        ) : (
+          <>
+            <img className="cinematic-player" src={playerNightPatrolUrl} alt="" draggable={false} />
+            <img className={`cinematic-enemy enemy-${cinematic.enemyArtKey}`} src={enemyArt} alt="" draggable={false} />
+          </>
+        )}
         <div className="cinematic-slash" />
         <div className="cinematic-caption">
           <p className="eyebrow">{isBoss ? "Boss Clear" : isElite ? "Elite Clear" : "Encounter Clear"}</p>
