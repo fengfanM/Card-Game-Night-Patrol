@@ -2157,9 +2157,9 @@ button:focus-visible {
 
 @media (max-width: 680px) {
   .top-hud {
-    grid-template-columns: 1fr;
-    gap: 8px;
-    padding: 8px 10px 10px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 8px;
+    padding: 6px 8px 12px;
     overflow: hidden;
   }
 
@@ -2169,7 +2169,7 @@ button:focus-visible {
   .hud-primary-row {
     width: 100%;
     flex-wrap: nowrap;
-    gap: 8px;
+    gap: 6px;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
@@ -2182,27 +2182,32 @@ button:focus-visible {
     display: none;
   }
 
-  .hud-left,
-  .hud-center,
-  .hud-right {
+  .hud-left {
     grid-column: 1;
+    grid-row: 1;
     justify-content: flex-start;
   }
 
   .hud-center {
+    grid-column: 1 / -1;
     grid-row: 2;
+    justify-content: flex-start;
   }
 
   .hud-right {
-    grid-row: 3;
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
+    justify-content: flex-end;
+    overflow: visible;
   }
 
   .hud-center-stack {
     min-width: 0;
-    width: max-content;
-    max-width: 100%;
+    width: 100%;
+    max-width: none;
     justify-items: start;
-    gap: 3px;
+    gap: 0;
   }
 
   .hud-primary-row {
@@ -2210,23 +2215,23 @@ button:focus-visible {
   }
 
   .hud-chip {
-    min-height: 38px;
-    gap: 6px;
-    padding: 6px 10px;
+    min-height: 34px;
+    gap: 5px;
+    padding: 5px 8px;
   }
 
   .hud-chip strong {
-    font-size: 1rem;
+    font-size: 0.92rem;
   }
 
   .hud-asset-icon {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
   }
 
   .hud-chip-gold .hud-asset-icon {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
   }
 
   .hud-title {
@@ -2234,23 +2239,28 @@ button:focus-visible {
   }
 
   .hud-credit {
-    max-width: 100%;
-    text-align: left;
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 2px;
+    max-width: none;
+    text-align: center;
+    font-size: 0.62rem;
+    line-height: 1;
   }
 
   .icon-btn {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
   }
 
   .icon-btn svg {
-    width: 22px;
-    height: 22px;
+    width: 19px;
+    height: 19px;
   }
 
   .hero-seal {
-    width: 46px;
-    height: 46px;
+    display: none;
   }
 
   .title-brand h1,
@@ -2316,8 +2326,8 @@ button:focus-visible {
   }
 
   .screen-combat {
-    height: calc(100vh - 180px);
-    height: calc(100svh - 180px);
+    height: calc(100vh - 105px);
+    height: calc(100svh - 105px);
     min-height: 0;
   }
 
@@ -2327,8 +2337,8 @@ button:focus-visible {
 
   .player-panel,
   .enemy-panel {
-    bottom: clamp(235px, 42vh, 350px);
-    bottom: clamp(235px, 42svh, 350px);
+    bottom: clamp(300px, 45vh, 390px);
+    bottom: clamp(300px, 45svh, 390px);
   }
 
   .intent-plaque {
@@ -2364,50 +2374,121 @@ button:focus-visible {
 
   .energy-orb {
     z-index: 72;
-    bottom: clamp(124px, 18vh, 168px);
-    bottom: clamp(124px, 18svh, 168px);
+    left: 14px;
+    bottom: clamp(244px, 32vh, 300px);
+    bottom: clamp(244px, 32svh, 300px);
   }
 
   .end-turn {
     z-index: 72;
-    bottom: clamp(118px, 17vh, 178px);
-    bottom: clamp(118px, 17svh, 178px);
+    right: 14px;
+    min-width: 132px;
+    min-height: 44px;
+    padding-inline: 18px;
+    bottom: clamp(250px, 33vh, 306px);
+    bottom: clamp(250px, 33svh, 306px);
   }
 
   .pile-counters {
-    z-index: 72;
+    z-index: 58;
+    bottom: 218px;
+    width: 58px;
+    height: 74px;
+  }
+
+  .pile-counters img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .pile-counters span {
+    font-size: 0.62rem;
+  }
+
+  .pile-counters strong {
+    height: 20px;
+    font-size: 0.82rem;
+  }
+
+  .pile-left {
+    left: 16px;
+  }
+
+  .pile-right {
+    right: 16px;
   }
 
   .hand-fan {
     z-index: 60;
-    bottom: 42px;
-  }
-
-  .game-card {
-    width: 138px;
-    min-width: 138px;
-    height: 218px;
+    bottom: 32px;
+    height: 182px;
   }
 
   .card-mode-hand {
-    left: calc(50% - 69px);
-    transform: translate(calc(var(--card-x) * 0.47), var(--card-y)) rotate(var(--card-rot));
+    width: 112px;
+    min-width: 112px;
+    height: 176px;
+  }
+
+  .card-mode-hand {
+    left: calc(50% - 56px);
+    transform: translate(calc(var(--card-x) * 0.36), calc(var(--card-y) * 0.55)) rotate(var(--card-rot));
   }
 
   .card-mode-hand:hover:not(:disabled) {
-    transform: translate(calc(var(--card-x) * 0.47), calc(var(--card-y) - 56px)) rotate(0deg) scale(1.08);
+    transform: translate(calc(var(--card-x) * 0.36), calc((var(--card-y) * 0.55) - 42px)) rotate(0deg) scale(1.06);
   }
 
-  .card-title {
-    font-size: 0.9rem;
+  .card-mode-hand.is-dragging {
+    transform: translate(calc((var(--card-x) * 0.36) + var(--drag-x)), calc((var(--card-y) * 0.55) + var(--drag-y))) rotate(0deg) scale(1.08);
   }
 
-  .game-card p {
-    font-size: 0.78rem;
+  .card-mode-hand .card-cost {
+    top: 5px;
+    left: 6px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .card-mode-hand .card-cost strong {
+    font-size: 0.86rem;
+  }
+
+  .card-mode-hand .card-title {
+    height: 24px;
+    margin-left: 33px;
+    font-size: 0.76rem;
+  }
+
+  .card-mode-hand .card-art-window {
+    height: 54px;
+    margin-top: 6px;
+    border-radius: 6px;
+  }
+
+  .card-mode-hand .card-kind {
+    margin: -7px auto 5px;
+    padding: 2px 7px;
+    font-size: 0.6rem;
+  }
+
+  .card-mode-hand p {
+    font-size: 0.68rem;
+    line-height: 1.32;
   }
 
   .energy-orb {
-    width: 78px;
-    height: 78px;
+    width: 64px;
+    height: 64px;
+  }
+
+  .energy-orb strong {
+    font-size: 1.55rem;
+  }
+
+  .energy-orb span {
+    margin-left: -12px;
+    margin-top: 24px;
+    font-size: 0.76rem;
   }
 }
