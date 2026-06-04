@@ -1666,7 +1666,8 @@ button:focus-visible {
   padding: 12px 13px 15px;
   color: #f7ead0;
   background:
-    linear-gradient(180deg, rgba(255, 244, 213, 0.08), rgba(4, 7, 11, 0.1)),
+    radial-gradient(circle at 50% 18%, rgba(130, 213, 199, 0.16), transparent 38%),
+    linear-gradient(180deg, rgba(45, 56, 45, 0.94), rgba(10, 14, 17, 0.98)),
     var(--card-frame-image) center / 100% 100% no-repeat;
   box-shadow:
     0 22px 34px rgba(0, 0, 0, 0.4),
@@ -1738,7 +1739,9 @@ button:focus-visible {
   display: grid;
   place-items: center;
   border: 0;
-  background: transparent;
+  border: 1px solid rgba(130, 213, 199, 0.34);
+  border-radius: 999px;
+  background: radial-gradient(circle at 42% 34%, rgba(86, 236, 226, 0.96), rgba(26, 105, 115, 0.92) 52%, rgba(8, 15, 17, 0.98) 72%);
   color: #efffff;
   z-index: 2;
   pointer-events: none;
@@ -1794,6 +1797,7 @@ button:focus-visible {
   border-radius: 8px;
   background:
     radial-gradient(circle at 50% 50%, rgba(255, 247, 219, 0.16), transparent 42%),
+    linear-gradient(180deg, rgba(210, 194, 151, 0.2), rgba(12, 20, 18, 0.82)),
     url("../assets/generated/cards/talisman-card-window.png") center / cover;
   background-blend-mode: screen, normal;
   position: relative;
@@ -2323,6 +2327,21 @@ button:focus-visible {
   .combat-view {
     height: 100%;
     min-height: 0;
+    background:
+      linear-gradient(180deg, rgba(5, 8, 8, 0.42), rgba(5, 8, 8, 0.66)),
+      url("../assets/generated/backgrounds/night-temple-battle.png") center / cover,
+      #07100f;
+  }
+
+  .combat-view::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 28% 62%, rgba(130, 213, 199, 0.14), transparent 15%),
+      radial-gradient(ellipse at 72% 59%, rgba(231, 95, 75, 0.13), transparent 16%);
+    pointer-events: none;
   }
 
   .screen-combat {
@@ -2420,27 +2439,57 @@ button:focus-visible {
 
   .hand-fan {
     z-index: 60;
-    bottom: 32px;
-    height: 182px;
+    left: 0;
+    right: 0;
+    bottom: 12px;
+    width: 100%;
+    height: 208px;
+    transform: none;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 9px;
+    padding: 0 14px 10px;
+    overflow-x: auto;
+    overflow-y: visible;
+    pointer-events: auto;
+    scroll-padding-inline: 14px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hand-fan::-webkit-scrollbar {
+    display: none;
   }
 
   .card-mode-hand {
-    width: 112px;
-    min-width: 112px;
-    height: 176px;
-  }
-
-  .card-mode-hand {
-    left: calc(50% - 56px);
-    transform: translate(calc(var(--card-x) * 0.36), calc(var(--card-y) * 0.55)) rotate(var(--card-rot));
+    position: relative;
+    left: auto;
+    bottom: auto;
+    flex: 0 0 128px;
+    width: 128px;
+    min-width: 128px;
+    height: 190px;
+    padding: 10px 10px 12px;
+    transform: none;
+    transform-origin: 50% 50%;
+    touch-action: pan-x;
+    scroll-snap-align: center;
+    background:
+      radial-gradient(circle at 50% 14%, rgba(103, 232, 218, 0.14), transparent 36%),
+      linear-gradient(180deg, rgba(39, 51, 43, 0.98), rgba(9, 14, 16, 0.99)),
+      var(--card-frame-image) center / 100% 100% no-repeat;
+    box-shadow:
+      0 12px 20px rgba(0, 0, 0, 0.46),
+      inset 0 0 0 1px rgba(255, 239, 207, 0.18);
   }
 
   .card-mode-hand:hover:not(:disabled) {
-    transform: translate(calc(var(--card-x) * 0.36), calc((var(--card-y) * 0.55) - 42px)) rotate(0deg) scale(1.06);
+    transform: none;
   }
 
   .card-mode-hand.is-dragging {
-    transform: translate(calc((var(--card-x) * 0.36) + var(--drag-x)), calc((var(--card-y) * 0.55) + var(--drag-y))) rotate(0deg) scale(1.08);
+    transform: translate(var(--drag-x), var(--drag-y)) scale(1.06);
   }
 
   .card-mode-hand .card-cost {
@@ -2457,13 +2506,20 @@ button:focus-visible {
   .card-mode-hand .card-title {
     height: 24px;
     margin-left: 33px;
-    font-size: 0.76rem;
+    font-size: 0.82rem;
+    line-height: 1.08;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .card-mode-hand .card-art-window {
-    height: 54px;
+    height: 48px;
     margin-top: 6px;
     border-radius: 6px;
+    background:
+      radial-gradient(circle at 50% 44%, rgba(255, 244, 201, 0.18), transparent 42%),
+      linear-gradient(180deg, rgba(204, 185, 139, 0.18), rgba(12, 19, 19, 0.88));
   }
 
   .card-mode-hand .card-kind {
@@ -2473,8 +2529,14 @@ button:focus-visible {
   }
 
   .card-mode-hand p {
-    font-size: 0.68rem;
+    display: -webkit-box;
+    min-height: 38px;
+    overflow: hidden;
+    color: rgba(255, 241, 214, 0.96);
+    font-size: 0.72rem;
     line-height: 1.32;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   .energy-orb {

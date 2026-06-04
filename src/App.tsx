@@ -97,6 +97,21 @@ const cinematicVideoUrls: Record<string, string> = {
   "boss-tigerlord": new URL("../assets/generated/cinematics/victory-boss-tigerlord.mp4", import.meta.url).href,
 };
 
+function useCompactViewport() {
+  const [compact, setCompact] = useState(() => (typeof window === "undefined" ? false : window.matchMedia("(max-width: 680px)").matches));
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+    const query = window.matchMedia("(max-width: 680px)");
+    const update = () => setCompact(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return compact;
+}
+
 export function App() {
   const [game, setGame] = useState<GameState>(() => createGameState());
   const [muted, setMuted] = useState(false);
@@ -362,9 +377,10 @@ function TitleScreen({
   onDifficulty: (difficulty: Difficulty) => void;
   onStart: (difficulty: Difficulty) => void;
 }) {
+  const compact = useCompactViewport();
   return (
     <section className="title-view">
-      <video className="scene-loop-video title-loop-video" src={sceneLoopVideoUrl} autoPlay loop muted playsInline />
+      {!compact && <video className="scene-loop-video title-loop-video" src={sceneLoopVideoUrl} autoPlay loop muted playsInline preload="metadata" />}
       <div className="title-copy">
         <p className="eyebrow">React + Phaser prototype</p>
         <div className="title-brand">
@@ -401,9 +417,10 @@ function TitleScreen({
 }
 
 function AboutScreen({ onBack, onHome }: { onBack: () => void; onHome: () => void }) {
+  const compact = useCompactViewport();
   return (
     <section className="about-view">
-      <video className="scene-loop-video title-loop-video" src={sceneLoopVideoUrl} autoPlay loop muted playsInline />
+      {!compact && <video className="scene-loop-video title-loop-video" src={sceneLoopVideoUrl} autoPlay loop muted playsInline preload="metadata" />}
       <div className="about-panel">
         <p className="eyebrow">About</p>
         <h1>关于《夜巡录：荒庙篇》</h1>
@@ -444,9 +461,10 @@ function AboutScreen({ onBack, onHome }: { onBack: () => void; onHome: () => voi
 
 function LoadingScreen({ difficulty }: { difficulty: Difficulty }) {
   const option = difficultyOptions.find((item) => item.id === difficulty) || difficultyOptions[1];
+  const compact = useCompactViewport();
   return (
     <section className="loading-view">
-      <video className="scene-loop-video loading-loop-video" src={sceneLoopVideoUrl} autoPlay loop muted playsInline />
+      {!compact && <video className="scene-loop-video loading-loop-video" src={sceneLoopVideoUrl} autoPlay loop muted playsInline preload="metadata" />}
       <div className="loading-copy">
         <p className="eyebrow">入夜</p>
         <h2>雾门将开</h2>
@@ -458,7 +476,9 @@ function LoadingScreen({ difficulty }: { difficulty: Difficulty }) {
 }
 
 function AmbientSceneVideo() {
-  return <video className="scene-loop-video ambient-scene-video" src={sceneLoopVideoUrl} autoPlay loop muted playsInline />;
+  const compact = useCompactViewport();
+  if (compact) return null;
+  return <video className="scene-loop-video ambient-scene-video" src={sceneLoopVideoUrl} autoPlay loop muted playsInline preload="metadata" />;
 }
 
 function MapScreen({ game, onChoose }: { game: GameState; onChoose: (nodeId: string) => void }) {
@@ -558,6 +578,7 @@ function CombatScreen({ game, onPlayCard, onEndTurn }: { game: GameState; onPlay
   const combat = game.combat!;
   const player = game.player!;
   const enemy = combat.enemy;
+  const compact = useCompactViewport();
   const [drag, setDrag] = useState<{
     uid: string;
     originX: number;
@@ -642,7 +663,7 @@ function CombatScreen({ game, onPlayCard, onEndTurn }: { game: GameState; onPlay
   return (
     <section className="combat-view">
       <CombatStage combat={combat} player={player} />
-      <video className="combat-scene-loop" src={sceneLoopVideoUrl} autoPlay loop muted playsInline />
+      {!compact && <video className="combat-scene-loop" src={sceneLoopVideoUrl} autoPlay loop muted playsInline preload="metadata" />}
       <div className={`combat-overlay ${drag ? "drag-active" : ""} ${expectedTarget ? `expects-${expectedTarget}` : ""} ${targetHot ? "target-hot" : ""}`}>
         <div className={`play-drop-zone ${drag ? "visible" : ""} ${targetHot ? "hot" : ""}`}>{targetHot ? "松手施放" : dropHint}</div>
         <div className={`target-ghost target-player ${expectedTarget === "player" ? "visible" : ""} ${targetHot && hoverTarget === "player" ? "hot" : ""}`}>
@@ -855,6 +876,7 @@ function typeLabel(type: string) {
 function CinematicScreen({ game, onContinue }: { game: GameState; onContinue: () => void }) {
   const cinematic = game.cinematic!;
   const reward = game.reward;
+  const compact = useCompactViewport();
   const [videoFailed, setVideoFailed] = useState(false);
   const [videoStarted, setVideoStarted] = useState(false);
   const enemyArt = enemyArtUrls[cinematic.enemyArtKey] || enemyArtUrls.lantern;
@@ -863,7 +885,7 @@ function CinematicScreen({ game, onContinue }: { game: GameState; onContinue: ()
   const posterSrc = cinematicPosterUrls[mediaKey] || cinematic.posterUrl;
   const isBoss = cinematic.combatType === "boss";
   const isElite = cinematic.combatType === "elite";
-  const shouldTryVideo = Boolean(videoSrc) && !videoFailed;
+  const shouldTryVideo = !compact && Boolean(videoSrc) && !videoFailed;
 
   useEffect(() => {
     setVideoFailed(false);

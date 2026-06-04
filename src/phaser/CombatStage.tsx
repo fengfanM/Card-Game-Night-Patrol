@@ -53,6 +53,8 @@ interface StageSnapshot {
 }
 
 class NightBattleScene extends Phaser.Scene {
+  private initialEnemyKey: string;
+  private failedTextures = new Set<string>();
   private bg?: Phaser.GameObjects.Image;
   private enemy?: Phaser.GameObjects.Image;
   private player?: Phaser.GameObjects.Container;
@@ -70,25 +72,27 @@ class NightBattleScene extends Phaser.Scene {
   private enemyBaseY = 0;
   private snapshot: StageSnapshot | null = null;
 
-  constructor() {
+  constructor(initialEnemyKey = "lantern") {
     super("NightBattle");
+    this.initialEnemyKey = ENEMY_ART_URLS[initialEnemyKey] ? initialEnemyKey : "lantern";
   }
 
   preload() {
+    this.load.on(Phaser.Loader.Events.FILE_LOAD_ERROR, (file: { key?: string }) => {
+      if (file.key) this.failedTextures.add(file.key);
+    });
     this.load.image("huangmiao-bg", nightTempleBattleUrl);
     this.load.image("player-night-patrol", playerNightPatrolUrl);
-    Object.entries(ENEMY_ART_URLS).forEach(([key, url]) => {
-      this.load.image(`enemy-${key}`, url);
-    });
+    this.load.image(`enemy-${this.initialEnemyKey}`, ENEMY_ART_URLS[this.initialEnemyKey]);
   }
 
   create() {
     const { width, height } = this.scale;
-    this.bg = this.add.image(width / 2, height / 2, "huangmiao-bg").setDisplaySize(width, height);
+    this.bg = this.add.image(width / 2, height / 2, this.safeTexture("huangmiao-bg", "bg")).setDisplaySize(width, height);
     this.add.rectangle(width / 2, height / 2, width, height, 0x050707, 0.18);
     this.add.ellipse(width / 2, height * 0.83, width * 0.82, height * 0.16, 0x080909, 0.36);
     this.createPlayer();
-    this.enemy = this.add.image(width * 0.74, height * 0.6, "enemy-lantern");
+    this.enemy = this.add.image(width * 0.74, height * 0.6, this.safeTexture(`enemy-${this.initialEnemyKey}`, "enemy"));
     this.enemy.setDisplaySize(width * 0.24, height * 0.34);
     this.enemyName = this.add.text(width * 0.74, height * 0.31, "", {
       fontFamily: "serif",
@@ -134,7 +138,7 @@ class NightBattleScene extends Phaser.Scene {
     const group = this.add.container(width * 0.28, height * 0.66);
     const shadow = this.add.ellipse(0, 8, 210, 40, 0x050505, 0.48);
     const glow = this.add.circle(20, -110, 92, 0x7bd6ce, 0.08);
-    const sprite = this.add.image(0, 8, "player-night-patrol").setOrigin(0.5, 1);
+    const sprite = this.add.image(0, 8, this.safeTexture("player-night-patrol", "player")).setOrigin(0.5, 1);
     group.add([shadow, glow, sprite]);
     this.player = group;
     this.playerSprite = sprite;
@@ -163,7 +167,7 @@ class NightBattleScene extends Phaser.Scene {
     const { width, height } = this.scale;
     this.bg.setDisplaySize(width, height).setPosition(width / 2, height / 2);
     if (this.snapshot.enemyKey !== this.lastEnemyKey) {
-      this.enemy.setTexture(`enemy-${this.snapshot.enemyKey}`);
+      this.enemy.setTexture(this.safeTexture(`enemy-${this.snapshot.enemyKey}`, "enemy"));
       this.lastEnemyKey = this.snapshot.enemyKey;
     }
     const enemySize = ENEMY_STAGE_SIZE[this.snapshot.enemyKey] || ENEMY_STAGE_SIZE.lantern;
@@ -221,6 +225,56 @@ class NightBattleScene extends Phaser.Scene {
       });
     }
   }
+
+  private safeTexture(key: string, kind: "bg" | "player" | "enemy") {
+    if (!this.failedTextures.has(key) && this.textures.exists(key)) return key;
+    const fallbackKey = `${key}-fallback`;
+    if (this.textures.exists(fallbackKey)) return fallbackKey;
+    const size = kind === "bg" ? { w: 900, h: 620 } : kind === "player" ? { w: 220, h: 420 } : { w: 240, h: 320 };
+    const texture = this.textures.createCanvas(fallbackKey, size.w, size.h);
+    if (!texture) return key;
+    const ctx = texture.getContext();
+    ctx.clearRect(0, 0, size.w, size.h);
+
+    if (kind === "bg") {
+      const bg = ctx.createLinearGradient(0, 0, 0, size.h);
+      bg.addColorStop(0, "#10201f");
+      bg.addColorStop(0.58, "#07100f");
+      bg.addColorStop(1, "#050707");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, size.w, size.h);
+      ctx.fillStyle = "rgba(130, 213, 199, 0.08)";
+      ctx.beginPath();
+      ctx.arc(size.w * 0.32, size.h * 0.38, size.w * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgba(255, 226, 173, 0.08)";
+      ctx.fillRect(size.w * 0.52, size.h * 0.34, size.w * 0.3, size.h * 0.34);
+    } else {
+      const glow = kind === "player" ? "rgba(130, 213, 199, 0.3)" : "rgba(232, 95, 75, 0.28)";
+      const body = kind === "player" ? "rgba(23, 52, 48, 0.92)" : "rgba(70, 26, 22, 0.88)";
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.ellipse(size.w * 0.5, size.h * 0.72, size.w * 0.34, size.h * 0.12, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = glow;
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.moveTo(size.w * 0.5, size.h * 0.18);
+      ctx.lineTo(size.w * 0.5, size.h * 0.82);
+      ctx.moveTo(size.w * 0.28, size.h * 0.42);
+      ctx.lineTo(size.w * 0.72, size.h * 0.42);
+      ctx.stroke();
+      ctx.fillStyle = body;
+      ctx.fillRect(size.w * 0.36, size.h * 0.28, size.w * 0.28, size.h * 0.56);
+      ctx.fillStyle = "rgba(255, 226, 173, 0.72)";
+      ctx.beginPath();
+      ctx.arc(size.w * 0.5, size.h * 0.19, size.w * 0.13, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    texture.refresh();
+    return fallbackKey;
+  }
 }
 
 export function CombatStage({ combat, player }: CombatStageProps) {
@@ -242,7 +296,7 @@ export function CombatStage({ combat, player }: CombatStageProps) {
       render: {
         antialias: true,
       },
-      scene: NightBattleScene,
+      scene: new NightBattleScene(combat.enemy.artKey),
     });
     return () => {
       gameRef.current?.destroy(true);
